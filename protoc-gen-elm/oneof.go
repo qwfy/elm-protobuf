@@ -1,6 +1,7 @@
 package main
 
 import "github.com/golang/protobuf/protoc-gen-go/descriptor"
+import "os"
 
 func (fg *FileGenerator) GenerateOneofDefinition(prefix string, inMessage *descriptor.DescriptorProto, oneofIndex int) error {
 	inOneof := inMessage.GetOneofDecl()[oneofIndex]
@@ -15,7 +16,8 @@ func (fg *FileGenerator) GenerateOneofDefinition(prefix string, inMessage *descr
 		fg.In()
 
 		leading := "="
-		{
+		// TODO: fetch this once during the generation process to guard against the value change
+		if os.Getenv("ELM_PROTOBUF_EXACTLY_ONEOF") != "true" {
 			oneofVariantName := oneofUnspecifiedValue(inOneof)
 			fg.P("%s %s", leading, oneofVariantName)
 			leading = "|"
@@ -62,7 +64,9 @@ func (fg *FileGenerator) GenerateOneofDecoder(prefix string, inMessage *descript
 					leading = ","
 				}
 			}
-			fg.P("%s JD.succeed %s", leading, oneofUnspecifiedValue(inOneof))
+			if os.Getenv("ELM_PROTOBUF_EXACTLY_ONEOF") != "true" {
+			  fg.P("%s JD.succeed %s", leading, oneofUnspecifiedValue(inOneof))
+			}
 			fg.P("]")
 			fg.Out()
 		}
@@ -91,7 +95,7 @@ func (fg *FileGenerator) GenerateOneofEncoder(prefix string, inMessage *descript
 			fg.In()
 
 			valueName := "x"
-			{
+			if os.Getenv("ELM_PROTOBUF_EXACTLY_ONEOF") != "true" {
 				oneofVariantName := oneofUnspecifiedValue(inOneof)
 				fg.P("%s ->", oneofVariantName)
 				fg.In()
