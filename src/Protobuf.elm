@@ -124,11 +124,7 @@ optionalEncoder name encoder v =
 -}
 requiredFieldEncoder : String -> (a -> JE.Value) -> a -> a -> Maybe ( String, JE.Value )
 requiredFieldEncoder name encoder default v =
-    if v == default then
-        Nothing
-
-    else
-        Just ( name, encoder v )
+    Just ( name, encoder v )
 
 
 {-| Encodes a repeated field.
