@@ -256,7 +256,12 @@ func processFile(inFile *descriptor.FileDescriptorProto) (*plugin.CodeGeneratorR
 }
 
 func (fg *FileGenerator) GenerateModule(moduleName string) {
-	fg.P("module %s exposing (..)", moduleName)
+    pkgName := os.Getenv("ELM_PROTOBUF_PACKAGE_NAME")
+    if pkgName != "" {
+        fg.P("module %s.%s exposing (..)", pkgName, moduleName)
+    } else {
+	    fg.P("module %s exposing (..)", moduleName)
+	}
 }
 
 func (fg *FileGenerator) GenerateComments(inFile *descriptor.FileDescriptorProto) {
