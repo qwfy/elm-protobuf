@@ -211,7 +211,12 @@ func processFile(inFile *descriptor.FileDescriptorProto) (*plugin.CodeGeneratorR
 		}
 		fullModuleName = strings.TrimSuffix(fullModuleName, ".")
 		// TODO: Do not expose everything.
-		fg.P("import %s exposing (..)", fullModuleName)
+        pkgName := os.Getenv("ELM_PROTOBUF_PACKAGE_NAME")
+        if pkgName != "" {
+            fg.P("import %s.%s exposing (..)", pkgName, fullModuleName)
+        } else {
+            fg.P("import %s exposing (..)", fullModuleName)
+        }
 	}
 
 	fg.P("")
