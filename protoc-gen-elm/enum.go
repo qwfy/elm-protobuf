@@ -17,6 +17,22 @@ func (fg *FileGenerator) GenerateEnumDefinition(prefix string, inEnum *descripto
 		}
 		fg.Out()
 	}
+
+    fg.P("")
+	fg.P("")
+	fg.P("intOf%s : %s -> Int", typeName, typeName)
+	fg.P("intOf%s x =", typeName)
+	{
+	    fg.In()
+        fg.P("case x of")
+        fg.In()
+		for _, enumValue := range inEnum.GetValue() {
+			// TODO: Convert names to CamelCase.
+			fg.P("%s -> %d", elmEnumValueName(enumValue.GetName()), enumValue.GetNumber())
+		}
+		fg.Out()
+		fg.Out()
+	}
 	return nil
 }
 
