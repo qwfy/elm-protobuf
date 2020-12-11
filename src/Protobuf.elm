@@ -1,7 +1,7 @@
 module Protobuf exposing
     ( decode, required, optional, repeated, field
     , withDefault, intDecoder, fromResult
-    , requiredFieldEncoder, optionalEncoder, repeatedFieldEncoder, numericStringEncoder, mapEntriesFieldEncoder, mapEntries
+    , requiredFieldEncoder, optionalEncoder, repeatedFieldEncoder, numericStringEncoder
     , Bytes, bytesFieldDecoder, bytesFieldEncoder
     , Timestamp, timestampDecoder, timestampEncoder
     , intValueDecoder, intValueEncoder
@@ -9,6 +9,7 @@ module Protobuf exposing
     , boolValueDecoder, boolValueEncoder
     , bytesValueDecoder, bytesValueEncoder
     , floatValueDecoder, floatValueEncoder
+    , mapEntries, mapEntriesFieldEncoder
     )
 
 {-| Runtime library for Google Protocol Buffers.
@@ -50,11 +51,11 @@ Buffer compiler](https://github.com/tiziano88/elm-protobuf).
 
 -}
 
+import Dict
 import ISO8601
 import Json.Decode as JD
 import Json.Encode as JE
 import Time
-import Dict
 
 
 {-| Decodes a message.
@@ -83,6 +84,7 @@ optional name decoder d =
 repeated : String -> JD.Decoder a -> JD.Decoder (List a -> b) -> JD.Decoder b
 repeated name decoder d =
     field (withDefault [] <| JD.field name <| JD.list decoder) d
+
 
 {-| Decodes a Dict.
 -}
@@ -131,25 +133,21 @@ requiredFieldEncoder name encoder default v =
 -}
 repeatedFieldEncoder : String -> (a -> JE.Value) -> List a -> Maybe ( String, JE.Value )
 repeatedFieldEncoder name encoder v =
-    case v of
-        [] ->
-            Nothing
+    Just ( name, JE.list encoder v )
 
-        _ ->
-            Just ( name, JE.list encoder v )
 
 {-| Encodes dictionary field.
 -}
 mapEntriesFieldEncoder : String -> (a -> JE.Value) -> Dict.Dict String a -> Maybe ( String, JE.Value )
 mapEntriesFieldEncoder name valueEncoder v =
-    if Dict.isEmpty v then
-        Nothing
-    else
-        let
-            items = Dict.toList v 
-            encodedItems = List.map (\(key, val) -> (key, valueEncoder val)) items
-        in
-            Just ( name, JE.object encodedItems)
+    let
+        items =
+            Dict.toList v
+
+        encodedItems =
+            List.map (\( key, val ) -> ( key, valueEncoder val )) items
+    in
+    Just ( name, JE.object encodedItems )
 
 
 {-| Bytes field.
