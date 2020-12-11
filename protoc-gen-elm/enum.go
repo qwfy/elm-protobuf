@@ -17,6 +17,22 @@ func (fg *FileGenerator) GenerateEnumDefinition(prefix string, inEnum *descripto
 		}
 		fg.Out()
 	}
+
+    fg.P("")
+	fg.P("")
+	fg.P("intOf%s : %s -> Int", typeName, typeName)
+	fg.P("intOf%s x =", typeName)
+	{
+	    fg.In()
+        fg.P("case x of")
+        fg.In()
+		for _, enumValue := range inEnum.GetValue() {
+			// TODO: Convert names to CamelCase.
+			fg.P("%s -> %d", elmEnumValueName(enumValue.GetName()), enumValue.GetNumber())
+		}
+		fg.Out()
+		fg.Out()
+	}
 	return nil
 }
 
@@ -24,6 +40,10 @@ func (fg *FileGenerator) GenerateEnumDecoder(prefix string, inEnum *descriptor.E
 	typeName := prefix + inEnum.GetName()
 	decoderName := decoderName(typeName)
 	fg.P("")
+	fg.P("")
+    fg.P("decode%s : JD.Decoder %s", typeName, typeName)
+    fg.P("decode%s = %s", typeName, decoderName)
+    fg.P("")
 	fg.P("")
 	fg.P("%s : JD.Decoder %s", decoderName, typeName)
 	fg.P("%s =", decoderName)
@@ -75,6 +95,10 @@ func (fg *FileGenerator) GenerateEnumEncoder(prefix string, inEnum *descriptor.E
 	typeName := prefix + inEnum.GetName()
 	argName := "v"
 	fg.P("")
+	fg.P("")
+    fg.P("encode%s : %s -> JE.Value", typeName, typeName)
+    fg.P("encode%s = %s", typeName, encoderName(typeName))
+    fg.P("")
 	fg.P("")
 	fg.P("%s : %s -> JE.Value", encoderName(typeName), typeName)
 	fg.P("%s %s =", encoderName(typeName), argName)

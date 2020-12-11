@@ -211,7 +211,12 @@ func processFile(inFile *descriptor.FileDescriptorProto) (*plugin.CodeGeneratorR
 		}
 		fullModuleName = strings.TrimSuffix(fullModuleName, ".")
 		// TODO: Do not expose everything.
-		fg.P("import %s exposing (..)", fullModuleName)
+        pkgName := os.Getenv("ELM_PROTOBUF_PACKAGE_NAME")
+        if pkgName != "" {
+            fg.P("import %s.%s exposing (..)", pkgName, fullModuleName)
+        } else {
+            fg.P("import %s exposing (..)", fullModuleName)
+        }
 	}
 
 	fg.P("")
@@ -256,7 +261,12 @@ func processFile(inFile *descriptor.FileDescriptorProto) (*plugin.CodeGeneratorR
 }
 
 func (fg *FileGenerator) GenerateModule(moduleName string) {
-	fg.P("module %s exposing (..)", moduleName)
+    pkgName := os.Getenv("ELM_PROTOBUF_PACKAGE_NAME")
+    if pkgName != "" {
+        fg.P("module %s.%s exposing (..)", pkgName, moduleName)
+    } else {
+	    fg.P("module %s exposing (..)", moduleName)
+	}
 }
 
 func (fg *FileGenerator) GenerateComments(inFile *descriptor.FileDescriptorProto) {

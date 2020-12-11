@@ -11,7 +11,7 @@ export CGO_ENABLED=0
 # git tag -a v0.0.2 -m 'release'
 
 # Remove the leading "v" from the tag, if necessary.
-VERSION=$(git tag --contains | tr -d v)
+VERSION=$(git rev-parse HEAD | cut -b -7)
 
 # Exit if a tag does not exist for the current commit.
 [[ -z $VERSION ]] && exit

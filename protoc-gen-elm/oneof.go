@@ -47,6 +47,10 @@ func (fg *FileGenerator) GenerateOneofDecoder(prefix string, inMessage *descript
 
 	fg.P("")
 	fg.P("")
+    fg.P("decode%s : JD.Decoder %s", oneofType, oneofType)
+    fg.P("decode%s = %s", oneofType, decoderName)
+    fg.P("")
+	fg.P("")
 	fg.P("%s : JD.Decoder %s", decoderName, oneofType)
 	fg.P("%s =", decoderName)
 	{
@@ -85,6 +89,10 @@ func (fg *FileGenerator) GenerateOneofEncoder(prefix string, inMessage *descript
 	argName := "v"
 
 	fg.P("")
+	fg.P("")
+	fg.P("encode%s : %s -> Maybe ( String, JE.Value )", oneofType, oneofType)
+	fg.P("encode%s = %s", oneofType, encoderName)
+    fg.P("")
 	fg.P("")
 	fg.P("%s : %s -> Maybe ( String, JE.Value )", encoderName, oneofType)
 	fg.P("%s %s =", encoderName, argName)

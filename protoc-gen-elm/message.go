@@ -117,6 +117,10 @@ func (fg *FileGenerator) GenerateMessageDecoder(prefix string, inMessage *descri
 
 	fg.P("")
 	fg.P("")
+    fg.P("decode%s : JD.Decoder %s", typeName, typeName)
+    fg.P("decode%s = %s", typeName, decoderName(typeName))
+    fg.P("")
+	fg.P("")
 	fg.P("%s : JD.Decoder %s", decoderName(typeName), typeName)
 	fg.P("%s =", decoderName(typeName))
 	{
@@ -168,6 +172,10 @@ func (fg *FileGenerator) GenerateMessageEncoder(prefix string, inMessage *descri
 	argName := "v"
 
 	fg.P("")
+	fg.P("")
+    fg.P("encode%s : %s -> JE.Value", typeName, typeName)
+    fg.P("encode%s = %s", typeName, encoderName(typeName))
+    fg.P("")
 	fg.P("")
 	fg.P("%s : %s -> JE.Value", encoderName(typeName), typeName)
 	fg.P("%s %s =", encoderName(typeName), argName)
